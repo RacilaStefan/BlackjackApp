@@ -11,7 +11,7 @@ const players : Map<string, Player> = new Map();
 
 const log = console.log;
 
-const server = createServer(requestListener).listen(8000);
+const server = createServer(requestListener).listen(process.env['PORT'] || 8000);
 const wss = new WebSocketServer({ server: server });
 
 log('Server is started');
