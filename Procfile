@@ -1,0 +1,1 @@
+web: webpack && ts-node ./src/server/server.ts
