@@ -1,0 +1,80 @@
+$white: #f2f2ee;
+$white-hover: #e1e3ef;
+$light-blue: #a7bcd6;
+$dark-blue: #051c37;
+
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+
+body {
+    background-color: $white;
+    font-family: 'Lato', sans-serif;
+}
+
+.center-band {
+    display: flex;
+    flex-wrap: nowrap;
+    margin-top: auto;
+    margin-bottom: auto;
+    width: 100%;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    -webkit-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+    align-items: center;
+    justify-content: space-evenly;
+}
+
+.band-child {
+    width: 400px;
+    height: 400px;
+    background-color: $dark-blue;
+    border-radius: 100px 20px;
+    border: 5px solid $light-blue;
+    box-shadow: 2px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+@media screen and (max-width: 1000px) {
+    .band-child {
+        width: 300px;
+        height: 300px;
+    }
+}
+
+.band-child-title {
+    color: $white;
+    font-size: 20px;
+    font-weight: 700;
+}
+
+.textarea {
+    border-radius: 20px;
+    padding: 5px 10px;
+    resize: none;
+    font-size: 18px;
+}
+
+.button {
+    border-radius: 10px;
+    color: $dark-blue;
+    background-color: $white;
+    padding: 5px 10px;
+    font-size: 18px;
+    font-weight: 700;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+}
+
+.button:hover {
+    background-color: $white-hover;
+}
+
+.button-group {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: space-evenly;
+}
