@@ -6,7 +6,7 @@
   "type": "commonjs",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "webpack && ts-node ./src/server/server.ts",
+    "build": "webpack",
     "start": "webpack serve",
     "start-server": "nodemon ./src/server/server.ts"
   },
