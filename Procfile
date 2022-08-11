@@ -1,1 +1,1 @@
-web: webpack && ts-node ./src/server/server.ts
+web: ts-node ./src/server/server.ts
