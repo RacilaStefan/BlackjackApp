@@ -3,7 +3,7 @@ import Logger from "../util/logger";
 
 const log = new Logger('Client');
 
-const url = process.env['NODE_ENV'] === 'development' ? 'ws://localhost:8000' : `ws://${window.location.host}`;
+const url = process.env['NODE_ENV'] === 'development' ? 'ws://localhost:8000' : `wss://${window.location.host}`;
 export const socket = new WebSocket(url);
 
 log.debug('URL', url);
