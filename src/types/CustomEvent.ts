@@ -1,4 +1,4 @@
 export interface CustomEvent {
-    event: string;
+    type: string;
     data: string;
 }

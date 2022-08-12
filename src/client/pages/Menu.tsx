@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { socket } from '..';
-import { OPS } from '../../util/constants';
+import { socket } from '../client';
+import { OPS, PATHS } from '../../util/constants';
 import { constructRequest } from '../../util/functions';
 
 export default function Menu() {
@@ -9,28 +9,28 @@ export default function Menu() {
   const navigate = useNavigate();
 
   const playAlone = () => {
-    socket.send(constructRequest({event: OPS.NEW_GAME, data: 'alone'}));
-    navigate('/play');
+    socket.send(constructRequest({type: OPS.NEW_GAME, data: 'alone'}));
+    navigate(PATHS.play);
+  }
+
+  const playWithFriends = () => {
+    socket.send(constructRequest({type: OPS.NEW_GAME, data: ''}));
+    navigate(PATHS.play);
   }
 
   return (
     <div className='center-band'>
-      <div className='band-child'>
-        <p className='band-child-title'>
+      <div className='band-child clickable' onClick={playAlone}>
+        <p className='band-child-title title'>
           Play Alone
         </p>
-        <div className='button-group' style={{'width': '80%'}}>
-          <button className='button' onClick={playAlone}>Play</button>
-        </div>
       </div>
-      <div className='band-child'>
-        <p className='band-child-title'>
+      <div className='band-child clickable' onClick={playWithFriends}>
+        <p className='band-child-title title'>
           Play with friends
         </p>
-        <div className='button-group' style={{'width': '80%'}}>
-          <button className='button'>Create Room</button>
-        </div>
       </div>
+
     </div>
   );
 }

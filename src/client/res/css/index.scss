@@ -1,13 +1,26 @@
-$white: #f2f2ee;
-$white-hover: #e1e3ef;
+$background: #b3d9ff;
+$error: #ff4d4d;
+
+$button-hover: #FF5722;
+
+
+
 $light-blue: #a7bcd6;
 $dark-blue: #051c37;
+$asd: #2D4059;
+$wer: #222831;
 
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
 
 body {
-    background-color: $white;
+    background-color: $background;
     font-family: 'Lato', sans-serif;
+}
+
+.title {
+    font-size: 20px;
+    font-weight: 700;
+    cursor: default;
 }
 
 .center-band {
@@ -27,54 +40,94 @@ body {
 
 .band-child {
     width: 400px;
-    height: 400px;
-    background-color: $dark-blue;
-    border-radius: 100px 20px;
-    border: 5px solid $light-blue;
-    box-shadow: 2px;
+    height: 542px;
     display: flex;
     flex-direction: column;
-    justify-content: space-evenly;
     align-items: center;
+    border-radius: 10px;
+    position: relative;
+
+    background-image: url(../media/king-of-hearts.svg);
+    background-size: contain;
+    transition: box-shadow 0.3s;
+}
+
+.band-child:hover {
+    box-shadow: 0px 0px 20px black;
 }
 
 @media screen and (max-width: 1000px) {
     .band-child {
         width: 300px;
-        height: 300px;
+        height: 407px;
     }
 }
 
 .band-child-title {
-    color: $white;
-    font-size: 20px;
-    font-weight: 700;
-}
-
-.textarea {
-    border-radius: 20px;
-    padding: 5px 10px;
-    resize: none;
-    font-size: 18px;
+    margin: -12% 0px 55% 0px;
+    font-size: 30px;
 }
 
 .button {
     border-radius: 10px;
     color: $dark-blue;
-    background-color: $white;
+    background-color: $light-blue;
     padding: 5px 10px;
-    font-size: 18px;
-    font-weight: 700;
     text-transform: uppercase;
-    transition: background-color 0.3s;
+    font-size: 20px;
+    font-weight: 700;
+    pointer-events: all;
+    display: flex;
+    align-items: center;
+    justify-items: center;
+    flex-wrap: nowrap;
+    cursor: pointer;
+
+    svg {
+        font-size: 2rem;
+    }
 }
 
 .button:hover {
-    background-color: $white-hover;
+    transition: border-radius 0.5s;
+    border-radius: 0px;
+    border: 3px solid black;
+    background-color: white;
+}
+
+.button:active {
+    box-shadow: 0px 0px 50px $background;
+    text-decoration: underline;
 }
 
 .button-group {
     display: flex;
     flex-wrap: nowrap;
     justify-content: space-evenly;
+}
+
+.button-icon-left {
+    position: relative;
+    right: 8px;
+}
+
+.button-icon-right {
+    position: relative;
+    right: -8px;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.clickable:hover {
+    border: 3px solid red;
+    margin: -3px;
+}
+
+.error-page {
+    background-image: url('../media/error404.jpg');
+    background-size: contain;
+    width: 356px;
+    height: 400px;
 }

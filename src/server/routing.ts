@@ -16,9 +16,9 @@ export function requestListener(req: IncomingMessage, res: ServerResponse) {
     let extension = route.substring(route.lastIndexOf("."));
     extension = extension === route ? '' : extension;
     const contentType = ASSET_TYPES[extension];
-    log('Route', route);
-    log('Extension', extension);
-    log('Content type', contentType);
+    // log('Route', route);
+    // log('Extension', extension);
+    // log('Content type', contentType);
     if(contentType === undefined){
         error('Unsuported asset', res);
         return;
@@ -26,7 +26,7 @@ export function requestListener(req: IncomingMessage, res: ServerResponse) {
 
     if (extension === '') {
         fs.readFile('./build/index.html', (err, file) => {
-            res.writeHead(200);
+            res.writeHead(200, {'Content-Type': contentType});
             res.end(file);
         });
     } else {
@@ -36,7 +36,7 @@ export function requestListener(req: IncomingMessage, res: ServerResponse) {
                 res.end(JSON.stringify({"message": "not found", "status": 404}));
                 return;
             }
-            res.writeHead(200);
+            res.writeHead(200, {'Content-Type': contentType});
             res.end(file);
         });
     }

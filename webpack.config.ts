@@ -4,7 +4,6 @@ import HtmlWebpackPlugin from 'html-webpack-plugin';
 import 'webpack-dev-server';
 
 module.exports = {
-    mode: 'production',
     entry: './src/client/index.tsx',
 
     output: {
@@ -30,11 +29,7 @@ module.exports = {
           use: ['style-loader', 'css-loader', 'sass-loader'],
         },
         {
-          test: /\.svg$/,
-          loader: '@svgr/webpack',
-        },
-        {
-          test: /\.(png|jpg|jpeg|gif|css)$/,
+          test: /\.(png|jpg|jpeg|svg|gif|css)$/,
           type: 'asset/resource',
         },
       ],
