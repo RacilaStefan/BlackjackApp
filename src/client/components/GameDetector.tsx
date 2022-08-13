@@ -12,10 +12,11 @@ export default function GameDetector() {
     
     useEffect(() => {
         if (location.pathname !== PATHS.game) {
-            socket.send(constructEvent({
-                type: EVENTS.LEAVE_GAME,
-                data: '',
-            }));
+            if (socket.readyState === socket.OPEN)
+                socket.send(constructEvent({
+                    type: EVENTS.LEAVE_GAME,
+                    data: '',
+                }));
         }
     }, [location.pathname]);
 
