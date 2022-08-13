@@ -36,7 +36,7 @@ export default function Notification({ op }) {
 
   return (
     element ?
-    <div className={`notification ${className} title`}>
+    <div className={`flex-container column notification ${className} title`}>
       {element}
       <button className='button' onClick={handleClose}>Close</button>
     </div> : <></>

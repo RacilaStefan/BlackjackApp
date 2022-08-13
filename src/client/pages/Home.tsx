@@ -1,61 +1,45 @@
-import React, { useContext } from 'react';
+import React, { useContext, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Context } from '../components/ContextProvider';
-import { ErrorMessage, Field, Form, Formik } from 'formik';
-import * as Yup from 'yup';
 import Logger from '../../util/logger';
-import { socket } from '../client';
-import { constructRequest } from '../../util/functions';
-import { OPS, PATHS } from '../../util/constants';
+import { EVENTS, PATHS } from '../../util/constants';
 import Notification from '../components/Notification';
 
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import IDForm from '../components/IDForm';
+import { socket } from '../client';
+import { constructEvent } from '../../util/functions';
 
 const log = new Logger('Home');
 
 export default function Home() {
   const context = useContext(Context);
-  const initialValues = {
-    id: ''
-  }
-  const validationSchema = Yup.object({
-    id: Yup.string().matches(/^[A-Za-z0-9]{2,20}$/, 'Caractere ilegale introduse!'),
-  });
+  const navigate = useNavigate();
 
   //const idProvenience = /*context.custom ? 'custom' :*/ 'generated';
 
-  const navigate = useNavigate();
-
-  const handleSubmit = (value) => {
+  const handleSubmit = (value, {resetForm}) => {
     if (value.id === '') return;
 
-    log.debug('Value submitted', value);
+    //log.debug('Value submitted', value);
 
-    socket.send(constructRequest({
-      type: OPS.SET_ID,
+    socket.send(constructEvent({
+      type: EVENTS.SET_ID,
       data: value.id,
     }));
-    context.setStatusEvents({...context.statusEvents, [OPS.SET_ID]: 'waiting'});
-  }
+    context.setStatusEvents({...context.statusEvents, [EVENTS.SET_ID]: 'waiting'});
 
+    resetForm();
+  }
+  
   return (
-    <div className='center-band'>
-      <Notification op={OPS.SET_ID} />
-      <div className='band-child'>
+    <div className='screen-center flex-container main-band'>
+      <Notification op={EVENTS.SET_ID} />
+      <div className='flex-container column band-child bg-hearts'>
         <p className='band-child-title title'>
           Your {/*{idProvenience}*/} ID is {context.id}.
         </p>
-        <Formik
-          onSubmit={handleSubmit}
-          validationSchema={validationSchema}
-          initialValues={initialValues}
-        >
-          <Form className='form-container'>
-            <Field className='form-field' placeholder='Custom ID' name='id'/>
-            <ErrorMessage className='error-message title' component='div' name='id'/>
-            <button className='button' style={{'marginBottom' : '45%'}}>Change</button> 
-          </Form>
-        </Formik>
+        <IDForm handleSubmit={handleSubmit}/>
         <button className='button' style={{
             'position': 'absolute',
             'left': '3%',
@@ -65,6 +49,9 @@ export default function Home() {
             <ArrowForwardIcon />
           </div>
         </button>
+      </div>
+      <div className='tips title'>
+        A custom ID can contain only letters and number and it must be between 2 and 20 characters
       </div>
     </div>
   );

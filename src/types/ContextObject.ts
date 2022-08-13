@@ -1,5 +1,5 @@
 import { Game } from "./GameTypes";
-import { OPS, statusEvents } from "../util/constants";
+import { EVENTS, statusEvents } from "../util/constants";
 
 export class ContextObject {
     statusEvents = statusEvents;

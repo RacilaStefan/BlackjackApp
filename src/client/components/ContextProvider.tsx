@@ -30,8 +30,8 @@ export default function ContextProvider({children}) {
     };
 
     contextHolder.context = {...context};
-    log.debug('Context', context);
-    log.debug('Context Holder', contextHolder.context);
+    // log.debug('Context', context);
+    // log.debug('Context Holder', contextHolder.context);
 
     return (
         <Context.Provider value={context}>

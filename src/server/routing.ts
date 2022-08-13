@@ -2,7 +2,6 @@ import fs from 'fs';
 import { IncomingMessage, ServerResponse } from 'http';
 import { ASSET_TYPES } from '../util/constants';
 
-
 const log = console.log;
 
 const error = (message: string, res: ServerResponse) => {

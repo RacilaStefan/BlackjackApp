@@ -1,10 +1,7 @@
 @use 'index';
 
 .form-container {
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: column;
-    align-items: center;
+    justify-content: unset;
     position: relative;
 }
 
@@ -12,15 +9,18 @@
     border-radius: 20px;
     border: 2px solid black;
     padding: 5px 10px;
-    font-size: 22px;
+    font-size: 1.5rem;
     font-weight: 700;
     transition: box-shadow 0.3s;
     margin-bottom: 13%;
-
 }
 
 .form-field:hover {
     box-shadow: 0px 0px 20px black;
+}
+
+.field-label {
+    margin-bottom: 5%;
 }
 
 .error-message {
@@ -36,16 +36,13 @@
 
 .notification {
     position: absolute;
-    display: flex;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    align-items: center;
     justify-content: space-around;
     top: -300px;
     width: 200px;
     height: 100px;
     border-radius: 20px;
     box-shadow: 0px 5px;
+    text-align: center;
 
     div {
         text-transform: uppercase;

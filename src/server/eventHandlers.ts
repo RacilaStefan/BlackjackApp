@@ -1,6 +1,6 @@
-import { constructRequest, getRandomCard, readCookie } from "../util/functions";
+import { constructEvent, getRandomCard, readCookie } from "../util/functions";
 import { CustomEvent } from "../types/CustomEvent";
-import { OPS } from "../util/constants";
+import { EVENTS } from "../util/constants";
 import { IncomingMessage } from "http";
 import { MessageEvent, WebSocket } from "ws";
 import { Game, Player } from "../types/GameTypes";
@@ -9,64 +9,94 @@ const log = console.log;
 
 export const games : { [key: string]: Game } = {};
 export const players : { [key: string]: Player } = {};
+export const playersIDLedger : { [key: string] : string } = {};
 
-export function handleMessageServer(message: MessageEvent, ws: WebSocket, id: string) {
+export function handleMessageServer(message: MessageEvent, ws: WebSocket, initialPlayerID: string) {
     const event = JSON.parse(message.data as string) as CustomEvent;
 
-    const player = players[id];
+    const currentPlayerID = playersIDLedger[initialPlayerID] as string;
+    const player = players[currentPlayerID];
+    log('Initial ID', initialPlayerID);
+    log('Current ID', currentPlayerID);
+    log('Event', event.type);
 
     if (player !== undefined) {
         switch(event.type) {
-            case OPS.GET_GAME: 
-                if (player.game !== undefined) {
-                    ws.send(
-                        constructRequest({
-                            type: OPS.GET_GAME,
-                            data: JSON.stringify(games[player.game.id]),
-                    }));
-                }
+            case EVENTS.GET_GAME: 
+                if (player.game === undefined) break;
+                
+                sendMsg(ws, EVENTS.GET_GAME, games[player.game.id]);
+                
                 break;
 
-            case OPS.NEW_GAME: 
-                const game = new Game(getValidID(true));
-                player.cards.push(getRandomCard(), getRandomCard());
+            case EVENTS.INFO: log(`Player with id ${currentPlayerID} says: ${event.data}`); break;
+            case EVENTS.JOIN_GAME:
+
+                const wantedGame = games[event.data]
+                if (wantedGame === undefined) {
+                    sendMsg(ws, EVENTS.JOIN_GAME, undefined);
+                    break;
+                }
+
+                if (wantedGame.pushPlayer(player)) {
+                    player.initCards();
+                    player.game = wantedGame;
+                    sendMsg(ws, EVENTS.JOIN_GAME, wantedGame);
+                }
+
+                break;
+
+            case EVENTS.LEAVE_GAME: 
+                player.status = 'not_ready';
+                if (player.game === undefined) break;
+                
+                games[player.game.id]?.removePlayer(player);
+
+                if (games[player.game.id]?.players.length === 0) {
+                    delete games[player.game.id];
+                }
+
+                delete player.game;
+                
+                break;
+
+            case EVENTS.NEW_GAME: 
+                const newGame = new Game(getValidID(true));
+                player.initCards();
+                player.game = newGame;
 
                 if (event.data === 'alone') {
                     player.status = 'ready';
                 }
 
-                game.users.push(player);
-                games[game.id] = game;
+                newGame.pushPlayer(player);
 
-                ws.send(constructRequest({
-                    type: OPS.GET_GAME,
-                    data: JSON.stringify(games[game.id]),
-                }));
+                games[newGame.id] = newGame;
+
+                sendMsg(ws, EVENTS.GET_GAME, newGame);
                 break;
 
-            case OPS.SET_ID: 
+            case EVENTS.SET_ID: 
                 let isValid = false;
-                if (players[event.data] === undefined) {
-                    player.id = event.data;
-                    players[event.data] = player;
+                if (players[event.data] === undefined) { // Check if wanted ID exists
+                    delete players[currentPlayerID]; // If it does not exist, delete the previous entry
+                    player.id = event.data; // Change the current player object
+                    players[event.data] = player; // Assign the new player to the new key
+                    playersIDLedger[initialPlayerID] = event.data;
                     isValid = true;
                 }
-                ws.send(constructRequest({
-                    type: OPS.SET_ID,
-                    data: isValid ? event.data : '',
-                }));
+                sendMsg(ws, EVENTS.SET_ID, isValid ? event.data : '');
                 break;
+
             default: log('Unknown event'); break; 
         }
     } else {
-        ws.send(constructRequest({
-            type: OPS.ERROR,
-            data: `Player with id ${id} does not exist`,
-        }));
+        sendMsg(ws, EVENTS.ERROR, `Player with id ${initialPlayerID} does not exist`);
     }
     
     if (process.env['NODE_ENV'] === 'development') {
         log('Players', JSON.stringify(players, null, 2));
+        log('ID Ledger', JSON.stringify(playersIDLedger, null, 2));
         log('Games', JSON.stringify(games, null, 2));
     }
 }
@@ -83,19 +113,21 @@ export function handleIncomingMessage(ws: WebSocket, request: IncomingMessage) :
 
     if (cookies === undefined || readCookie(cookies, 'ID') === undefined) {
         id = getValidID();
+        playersIDLedger[id] = id;
         players[id] = new Player(id, ws);
-        ws.send(constructRequest({type: OPS.SET_COOKIE, data: id}));
+        ws.send(constructEvent({type: EVENTS.SET_COOKIE, data: id}));
 
         log('Connected with a new client, sendind id: ' + id);
     } else {
         id = (readCookie(cookies, 'ID') as any).value;
-        if (players[id] === undefined) {
+        if (playersIDLedger[id] === undefined) {
+            playersIDLedger[id] = id;
             players[id] = new Player(id, ws);
         }
         log('Connected with client, id: ' + id);
     }
 
-    ws.send(constructRequest({type: OPS.INFO, data: 'Message from the server'}));
+    ws.send(constructEvent({type: EVENTS.INFO, data: 'Message from the server'}));
 
     return id;
 }
@@ -115,4 +147,37 @@ function getValidID(isForGame?: boolean) {
     } while (!isValid);
 
     return id;
+}
+
+export function handleLoosingConnection(id: string) {
+    const currentID = playersIDLedger[id];
+    if (currentID !== undefined) {
+        log(`Client with ID ${currentID} has lost connection`);
+        const currentPlayer = players[currentID];
+
+        if (currentPlayer === undefined) {
+            log ('Player was not registered, HELP...');
+            return;
+        }
+
+        const game = currentPlayer.game;
+        
+        if (game !== undefined) {
+            games[game.id]?.removePlayer(currentPlayer);
+            if (games[game.id]?.players.length === 0) {
+                log('Removing game with ID', id);
+                delete games[game.id];
+            }
+        }
+
+        delete players[currentID];
+        delete playersIDLedger[id];
+    }
+}
+
+function sendMsg(ws: WebSocket, type: string, msg: any) {
+    ws.send(constructEvent({
+        type: type,
+        data: typeof msg === 'string' ? msg : JSON.stringify(msg),
+    }));
 }

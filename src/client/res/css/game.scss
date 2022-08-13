@@ -1,0 +1,56 @@
+.board {
+    border-radius: 50px;
+    border: 3px solid black;
+    box-shadow: 0px 0px 20px #222222;
+    width: 800px;
+    height: 800px;
+    background: rgb(50,204,26);
+    background: radial-gradient(circle, rgba(50,204,26,1) 0%, rgba(26,136,41,1) 100%);
+}
+
+.dealer-container {
+    position: relative;
+    top: -5%;
+}
+
+.dealer-title {
+    position: absolute;
+    top: -65%;
+    font-size: 2rem;
+}
+
+.players-wrapper {
+    position: relative;
+    top: 82%;
+    justify-content: space-evenly;
+}
+
+.player-container {
+    width: 100%;
+}
+
+.player-title {
+    position: absolute;
+    top: 120%;
+    font-size: 2rem;
+}
+
+.cards-container {   }
+
+.card-icon {
+    width: 40px;
+    height: 50px;
+    padding: 10px;
+}
+
+
+.card {
+    font-family: 'Rancho', cursive;
+    font-size: 3rem;
+    background-color: white;
+    border: 3px solid black;
+    border-radius: 20px;
+    padding-left: 10px;
+    box-shadow: 0px 0px 20px black;
+}
+

@@ -8,10 +8,12 @@ import RoutesList from './components/RoutesList';
 
 import './res/css/home.scss';
 import './res/css/game.scss';
+import BackButton from './components/BackButton';
+import GameDetector from './components/GameDetector';
 
 const log = new Logger('Index');
 
-let rootElem = document.getElementById('root') as HTMLDivElement;
+export let rootElem = document.getElementById('root') as HTMLDivElement;
 
 if (rootElem === null) {
     rootElem = document.createElement('div');
@@ -25,6 +27,8 @@ root.render(
         <BrowserRouter>
             <ContextProvider>
                 <RoutesList />
+                <BackButton />
+                <GameDetector />
             </ContextProvider>
         </BrowserRouter>
     </React.StrictMode>

@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import { MessageEvent, WebSocketServer } from 'ws';
 import { requestListener } from './routing';
-import { handleIncomingMessage, handleMessageServer } from './eventHandlers';
+import { handleIncomingMessage, handleLoosingConnection, handleMessageServer } from './eventHandlers';
 
 const log = console.log;
 
@@ -19,6 +19,10 @@ wss.on('connection', (ws, request) => {
 
     ws.onmessage = (event: MessageEvent) => {
         handleMessageServer(event, ws, id);
+    }
+
+    ws.onclose = (event) => {
+        handleLoosingConnection(id);
     }
 });
 

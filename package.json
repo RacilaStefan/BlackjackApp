@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack --mode=production",
     "sim-build": "webpack --mode=production && cross-env NODE_ENV=production PORT=3333 ts-node ./src/server/server.ts",
-    "start": "webpack --mode=development serve",
+    "start": "webpack serve --mode=development",
     "start-server": "cross-env NODE_ENV=development nodemon ./src/server/server.ts"
   },
   "keywords": [],

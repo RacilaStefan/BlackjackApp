@@ -12,7 +12,7 @@ export default function RoutesList() {
         <Routes>
             <Route path={PATHS.home} element={<Home />} />
             <Route path={PATHS.menu} element={<Menu />} />
-            <Route path={PATHS.play} element={<Game />} />
+            <Route path={PATHS.game} element={<Game />} />
             <Route path='*' element={<Error />} />
         </Routes>
     </main>

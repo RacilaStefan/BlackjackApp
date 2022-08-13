@@ -1,36 +1,68 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { socket } from '../client';
-import { OPS, PATHS } from '../../util/constants';
-import { constructRequest } from '../../util/functions';
+import { EVENTS, PATHS } from '../../util/constants';
+import { constructEvent } from '../../util/functions';
+import BackButton from '../components/BackButton';
+import { Context } from '../components/ContextProvider';
+import { Formik } from 'formik';
+import IDForm from '../components/IDForm';
 
 export default function Menu() {
-
+  const context = useContext(Context);
   const navigate = useNavigate();
 
   const playAlone = () => {
-    socket.send(constructRequest({type: OPS.NEW_GAME, data: 'alone'}));
-    navigate(PATHS.play);
+    socket.send(constructEvent({type: EVENTS.NEW_GAME, data: 'alone'}));
+    context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'waiting'});
+    navigate(PATHS.game);
   }
 
-  const playWithFriends = () => {
-    socket.send(constructRequest({type: OPS.NEW_GAME, data: ''}));
-    navigate(PATHS.play);
+  const createGame = () => {
+    socket.send(constructEvent({type: EVENTS.NEW_GAME, data: ''}));
+    context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'waiting'});
+    navigate(PATHS.game);
+  }
+
+  const joinGame = (value, {resetForm}) => {
+    if (value.id === '') return;
+
+    //log.debug('Value submitted', value);
+
+    socket.send(constructEvent({
+      type: EVENTS.JOIN_GAME,
+      data: value.id,
+    }));
+    context.setStatusEvents({...context.statusEvents, [EVENTS.JOIN_GAME]: 'waiting'});
+
+    resetForm();
   }
 
   return (
-    <div className='center-band'>
-      <div className='band-child clickable' onClick={playAlone}>
+    <div className='screen-center flex-container main-band'>
+      <div className='flex-container column band-child clickable bg-hearts' onClick={playAlone}>
         <p className='band-child-title title'>
           Play Alone
         </p>
       </div>
-      <div className='band-child clickable' onClick={playWithFriends}>
+      <div className='flex-container column band-child clickable bg-clubs' onClick={createGame}>
         <p className='band-child-title title'>
-          Play with friends
+          Create A Game
         </p>
       </div>
-
+      <div className="screen-center">
+        <IDForm handleSubmit={joinGame} 
+          placeholder='Game ID' 
+          submitString='Join' 
+          label='Join A Game'
+          fieldStyle={{'width': '40%', 'marginBottom' : '5%'}}
+          errorStyle={{'top' : '160px', 'width' : '200px'}}
+          regex= {/[0-9]{1,3}$/}
+        />
+      </div>
+      <div className='tips title'>
+        A Game ID is a number from 1 to 999
+      </div>
     </div>
   );
 }

@@ -1,4 +1,5 @@
-import { handleMessageClient } from "../util/functions";
+import { EVENTS } from "../util/constants";
+import { constructEvent, handleMessageClient } from "../util/functions";
 import Logger from "../util/logger";
 
 const log = new Logger('Client');
@@ -12,6 +13,11 @@ log.debug('Enviroment', process.env['NODE_ENV']);
 socket.onopen = () => {
     log.info('Connection open');
     
+    socket.send(constructEvent({
+        type: EVENTS.INFO,
+        data: 'Hello server!'
+    }));
+
     socket.onmessage = (event) => {
         log.debug('Message Event', event.data);
         handleMessageClient(event);

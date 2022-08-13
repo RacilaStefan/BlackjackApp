@@ -10,46 +10,61 @@ $dark-blue: #051c37;
 $asd: #2D4059;
 $wer: #222831;
 
-@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Rancho&display=swap');
 
 body {
-    background-color: $background;
+    background: rgb(179,217,255);
+    background: radial-gradient(circle, rgba(179,217,255,1) 0%, rgba(49,160,184,1) 100%);
     font-family: 'Lato', sans-serif;
 }
 
-.title {
-    font-size: 20px;
-    font-weight: 700;
-    cursor: default;
+.flex-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
 }
 
-.center-band {
-    display: flex;
-    flex-wrap: nowrap;
-    margin-top: auto;
-    margin-bottom: auto;
-    width: 100%;
+.column {
+    flex-direction: column;
+}
+.title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: default;
+    text-align: center;
+}
+
+.screen-center {
     position: fixed;
     top: 50%;
     left: 50%;
     -webkit-transform: translate(-50%, -50%);
     transform: translate(-50%, -50%);
-    align-items: center;
+}
+
+.main-band {
+    width: 100%;
     justify-content: space-evenly;
 }
 
 .band-child {
     width: 400px;
     height: 542px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
     border-radius: 10px;
     position: relative;
+    justify-content: unset;
 
-    background-image: url(../media/king-of-hearts.svg);
     background-size: contain;
     transition: box-shadow 0.3s;
+}
+
+.bg-hearts {
+    background-image: url(../media/king-of-hearts.svg);
+}
+
+.bg-clubs {
+    background-image: url(../media/king-of-clubs.svg);
 }
 
 .band-child:hover {
@@ -65,7 +80,7 @@ body {
 
 .band-child-title {
     margin: -12% 0px 55% 0px;
-    font-size: 30px;
+    font-size: 2rem;
 }
 
 .button {
@@ -130,4 +145,13 @@ body {
     background-size: contain;
     width: 356px;
     height: 400px;
+}
+
+.tips {
+    position: absolute;
+    top: 140%;
+    left: 50%;
+    -webkit-transform: translate(-50%, 0%);
+    transform: translate(-50%, 0%);
+
 }

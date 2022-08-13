@@ -1,13 +1,15 @@
 export const PATHS = {
     home: '/',
     menu: '/menu',
-    play: '/game',
+    game: '/game',
 };
 
-export const OPS = {
+export const EVENTS = {
     ERROR: 'ERROR',
     INFO: 'INFO',
     GET_GAME: 'GET_GAME',
+    JOIN_GAME: 'JOIN_GAME',
+    LEAVE_GAME: 'LEAVE_GAME',
     NEW_GAME: 'NEW_GAME',
     SET_COOKIE: 'SET_COOKIE',
     SET_ID: 'SET_ID',
@@ -16,7 +18,7 @@ export const OPS = {
 
 export const statusEvents: { [key: string] : 'waiting' | 'close' | 'error' | 'success' } = {};
 
-for (const [key, ] of Object.entries(OPS)) {
+for (const [key, ] of Object.entries(EVENTS)) {
     statusEvents[key] = 'close';
 }
 
@@ -30,4 +32,6 @@ export const ASSET_TYPES = {
     '': 'text/html',    
 };
 
-export const CARD_TYPES = [ 'spades', 'heart', 'clubs', 'diamond' ];
+export const CARD_TYPES = [ 'spades', 'hearts', 'clubs', 'diamonds' ];
+
+export const MAX_PLAYERS_PER_GAME = 5;
