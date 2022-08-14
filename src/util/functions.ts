@@ -22,6 +22,7 @@ export function handleMessageClient(message: MessageEvent<any>) {
                 context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'close'});
                 break;
             case EVENTS.INFO: log.info(event.data); break;
+            case EVENTS.PING: log.info(event.data); break;
             case EVENTS.SET_COOKIE: 
                 document.cookie = 'ID='+event.data; 
                 context.setId(event.data);

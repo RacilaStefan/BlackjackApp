@@ -1,14 +1,13 @@
 $background: #b3d9ff;
-$error: #ff4d4d;
 
-$button-hover: #FF5722;
+$error: #f74f4f;
+$waiting: #faff75;
+$succes: #58f74f;
 
-
-
-$light-blue: #a7bcd6;
-$dark-blue: #051c37;
-$asd: #2D4059;
-$wer: #222831;
+$button: #d97575;
+$button-hover: #9ab8ff;
+$special-button: #70ff70;
+$special-button-hover: #ffffff;
 
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Rancho&display=swap');
 
@@ -28,6 +27,7 @@ body {
 .column {
     flex-direction: column;
 }
+
 .title {
     font-size: 1.5rem;
     font-weight: 700;
@@ -85,8 +85,8 @@ body {
 
 .button {
     border-radius: 10px;
-    color: $dark-blue;
-    background-color: $light-blue;
+    color: black;
+    background-color: $button;
     padding: 5px 10px;
     text-transform: uppercase;
     font-size: 20px;
@@ -94,9 +94,10 @@ body {
     pointer-events: all;
     display: flex;
     align-items: center;
-    justify-items: center;
+    justify-content: center;
     flex-wrap: nowrap;
     cursor: pointer;
+    transition: border-radius 0.3s;
 
     svg {
         font-size: 2rem;
@@ -107,12 +108,14 @@ body {
     transition: border-radius 0.5s;
     border-radius: 0px;
     border: 3px solid black;
-    background-color: white;
+    background-color: $button-hover;
 }
 
 .button:active {
     box-shadow: 0px 0px 50px $background;
     text-decoration: underline;
+    border: 3px solid black;
+    background-color: $button-hover;
 }
 
 .button-group {
@@ -153,5 +156,33 @@ body {
     left: 50%;
     -webkit-transform: translate(-50%, 0%);
     transform: translate(-50%, 0%);
+}
 
+.text-border-2px {
+    text-shadow: 
+        -2px -2px 0 black,
+        -2px -1px 0 black,
+        -2px 0px 0 black,
+        -2px 1px 0 black,
+        -2px 2px 0 black,
+        -1px -2px 0 black,
+        -1px -1px 0 black,
+        -1px 0px 0 black,
+        -1px 1px 0 black,
+        -1px 2px 0 black,
+        0px -2px 0 black,
+        0px -1px 0 black,
+        0px 0px 0 black,
+        0px 1px 0 black,
+        0px 2px 0 black,
+        1px -2px 0 black,
+        1px -1px 0 black,
+        1px 0px 0 black,
+        1px 1px 0 black,
+        1px 2px 0 black,
+        2px -2px 0 black,
+        2px -1px 0 black,
+        2px 0px 0 black,
+        2px 1px 0 black,
+        2px 2px 0 black;
 }

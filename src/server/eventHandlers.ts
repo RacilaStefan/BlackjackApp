@@ -32,7 +32,7 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
             case EVENTS.INFO: log(`Player with id ${currentPlayerID} says: ${event.data}`); break;
             case EVENTS.JOIN_GAME:
 
-                const wantedGame = games[event.data]
+                const wantedGame = games[event.data];
                 if (wantedGame === undefined) {
                     sendMsg(ws, EVENTS.JOIN_GAME, undefined);
                     break;
@@ -40,14 +40,13 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
 
                 if (wantedGame.pushPlayer(player)) {
                     player.initCards();
-                    player.game = wantedGame;
                     sendMsg(ws, EVENTS.JOIN_GAME, wantedGame);
                 }
 
                 break;
 
             case EVENTS.LEAVE_GAME: 
-                player.status = 'not_ready';
+                player.status = 'not-ready';
                 if (player.game === undefined) break;
                 
                 games[player.game.id]?.removePlayer(player);
@@ -56,30 +55,36 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
                     delete games[player.game.id];
                 }
 
-                delete player.game;
+                //delete player.game;
                 
                 break;
 
             case EVENTS.NEW_GAME: 
                 const newGame = new Game(getValidID(true));
                 player.initCards();
-                player.game = newGame;
 
                 if (event.data === 'alone') {
                     player.status = 'ready';
+                    newGame.dealer.status = 'ready';
                 }
 
                 newGame.pushPlayer(player);
+                newGame.logs.push(`Player ${player.id} created a game`);
 
                 games[newGame.id] = newGame;
 
                 sendMsg(ws, EVENTS.GET_GAME, newGame);
                 break;
 
+            case EVENTS.PING:
+                log(event.data);
+                sendMsg(ws, EVENTS.PING, 'Pong.'); 
+                break;
+
             case EVENTS.SET_ID: 
                 let isValid = false;
-                if (players[event.data] === undefined) { // Check if wanted ID exists
-                    delete players[currentPlayerID]; // If it does not exist, delete the previous entry
+                if (players[event.data] === undefined) { // Check if wanted ID is valid
+                    delete players[currentPlayerID]; // If it is valid, delete the previous entry
                     player.id = event.data; // Change the current player object
                     players[event.data] = player; // Assign the new player to the new key
                     playersIDLedger[initialPlayerID] = event.data;
@@ -95,7 +100,8 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
     }
     
     if (process.env['NODE_ENV'] === 'development') {
-        log('Players', JSON.stringify(players, null, 2));
+        //log('Players', JSON.stringify(players, null, 2));
+        log('Players', players);
         log('ID Ledger', JSON.stringify(playersIDLedger, null, 2));
         log('Games', JSON.stringify(games, null, 2));
     }

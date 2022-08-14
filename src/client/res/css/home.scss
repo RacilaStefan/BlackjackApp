@@ -50,13 +50,13 @@
 }
 
 .success {
-    background-color: #58f74f;
+    background-color: index.$succes;
 }
 
 .error {
-    background-color: #f74f4f;
+    background-color: index.$error;
 }
 
 .waiting {
-    background-color: #faff75;
+    background-color: index.$waiting;
 }

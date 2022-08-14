@@ -6,6 +6,9 @@ export class Game {
     id: string;
     players: Player[] = [];
     dealer: Player;
+    logs: string[] = [];
+    turnID: string = '';
+    turnIndex: number = 0;
     
     constructor(id: string) {
         this.id = id;
@@ -15,7 +18,9 @@ export class Game {
 
     pushPlayer(player: Player) {
         if (this.players.length < MAX_PLAYERS_PER_GAME) {
+            player.game = this;
             this.players.push(player);
+            this.turnID = this.players[this.turnIndex++]?.id as string;
             return true;
         }
 
@@ -32,11 +37,32 @@ export class Game {
 
         this.players = players;
     }
+
+    updateTurn() {
+        if (this.turnIndex > this.players.length - 2) {
+            this.turnID = this.dealer.id;
+            return false;
+        }
+
+        this.turnID = this.players[this.turnIndex++]?.id as string;
+
+        return true;
+    }
+
+    toJSON () {
+        let result = {};
+        for (let key in this) {
+            if (key !== 'turnIndex') {
+                result[key.toString()] = this[key];
+            }
+        }
+        return result;
+    };
 }
 
 export class Player {
     id: string;
-    status: 'ready' | 'not_ready' = 'not_ready';
+    status: 'ready' | 'not-ready' = 'not-ready';
     game?: Game;
     cards: Card[] = [];
     cardsSum?: number;

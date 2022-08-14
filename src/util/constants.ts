@@ -5,12 +5,15 @@ export const PATHS = {
 };
 
 export const EVENTS = {
+    DRAW_CARD: 'DRAW_CARD',
+    END_TURN: 'END_TURN',
     ERROR: 'ERROR',
     INFO: 'INFO',
     GET_GAME: 'GET_GAME',
     JOIN_GAME: 'JOIN_GAME',
     LEAVE_GAME: 'LEAVE_GAME',
     NEW_GAME: 'NEW_GAME',
+    PING: 'PING',
     SET_COOKIE: 'SET_COOKIE',
     SET_ID: 'SET_ID',
     VALIDATE_ID: 'VALIDATE_ID',

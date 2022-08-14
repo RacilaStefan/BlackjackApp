@@ -7,6 +7,8 @@ import HeartsIcon from '../components/card-icons/HeartsIcon';
 import ClubsIcon from '../components/card-icons/ClubsIcon';
 import DiamondsIcon from '../components/card-icons/DiamondsIcon';
 import SpadesIcon from '../components/card-icons/SpadesIcon';
+import StopIcon from '@mui/icons-material/PanToolOutlined';
+import AddIcon from '@mui/icons-material/Add';
 
 const cardIcons = {
   'hearts' : <HeartsIcon />,
@@ -51,8 +53,11 @@ export default function Game() {
   const players = game.players.map(player => {
     return (
       <div key={player.id} className='flex-container player-container'>
-        <div className='player-title title'>
-          {`${player.id} is ${player.status}. Points: ${player.cardsSum}`}
+        <div className={`flex-container player-title title ${player.status} text-border-2px `}>
+          {player.id}
+          <div className='flex-container points'>
+            {player.cardsSum}
+          </div>
         </div>
         <div className='flex-container cards-container'>
           {renderCards(player.cards)}
@@ -64,8 +69,11 @@ export default function Game() {
   return (
     <div className='screen-center board'>
       <div className='flex-container column dealer-container'>
-        <div className='dealer-title title'>
-          {`${game.dealer.id} Points: ${game.dealer.cardsSum}`}
+        <div className={`flex-container dealer-title title ${game.dealer.status} text-border-2px`}>
+          {game.dealer.id}
+          <div className='flex-container points'>
+            {game.dealer.cardsSum}
+          </div>
         </div>
         <div className='flex-container cards-container'>
             {renderCards(game.dealer.cards)}
@@ -74,8 +82,18 @@ export default function Game() {
       <div className='flex-container players-wrapper'>
         {players}
       </div>
-      <button className='button'>Hit</button>
-      <button className='button'>Stand</button>
+      <button className='button special-button' style={{'left' : '-25%'}}>
+        <div className='button-icon-left'>
+          <AddIcon />
+        </div>
+        Hit
+      </button>
+      <button className='button special-button' style={{'right' : '-25%'}}>
+        <div className='button-icon-left'>
+          <StopIcon />
+        </div>
+        Stand
+      </button>
     </div>
   );
 }

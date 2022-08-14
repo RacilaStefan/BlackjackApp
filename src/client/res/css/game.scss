@@ -1,3 +1,5 @@
+@use 'index';
+
 .board {
     border-radius: 50px;
     border: 3px solid black;
@@ -15,13 +17,13 @@
 
 .dealer-title {
     position: absolute;
-    top: -65%;
+    top: -70%;
     font-size: 2rem;
 }
 
 .players-wrapper {
     position: relative;
-    top: 82%;
+    top: 86%;
     justify-content: space-evenly;
 }
 
@@ -31,18 +33,15 @@
 
 .player-title {
     position: absolute;
-    top: 120%;
+    top: 125%;
     font-size: 2rem;
 }
-
-.cards-container {   }
 
 .card-icon {
     width: 40px;
     height: 50px;
     padding: 10px;
 }
-
 
 .card {
     font-family: 'Rancho', cursive;
@@ -52,5 +51,53 @@
     border-radius: 20px;
     padding-left: 10px;
     box-shadow: 0px 0px 20px black;
+    pointer-events: none;
 }
 
+.special-button {
+    width: 125px;
+    height: 125px;
+    border-radius: 100px;
+    background-color: index.$special-button;
+    transition: border-radius 0.7s;
+    position: absolute;
+    top: 40%;
+}
+
+.special-button:hover {
+    background-color: index.$special-button;
+    box-shadow: 0px 0px 20px #555555;
+    border-radius: 20px;
+    border: revert;
+    transition: border-radius 0.5s, box-shadow 0.5s;
+}
+
+.special-button:active {
+    background-color: index.$special-button;
+    text-decoration: none;
+    box-shadow: 0px 0px 70px index.$special-button;
+    border: revert;
+    transition: box-shadow 0.3s step-start, border-radius 0.5s;
+}
+
+.ready {
+    color: index.$succes;
+
+}
+
+.not-ready {
+    color: index.$error;
+}
+
+.points {
+    color: black;
+    text-shadow: none;
+    width: 50px;
+    height: 50px;
+    background: rgb(50,204,26);
+    background: radial-gradient(circle, rgba(50,204,26,1) 0%, rgba(26,136,41,1) 100%);
+    border: 3px solid black;
+    border-radius: 50px;
+    font-size: 2rem;
+    margin: -10px 20px;
+}

@@ -1,5 +1,8 @@
 import * as path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import CssExtractor from "mini-css-extract-plugin";
+
+import CssMinimizer from "css-minimizer-webpack-plugin";
 
 import 'webpack-dev-server';
 
@@ -25,11 +28,11 @@ module.exports = {
           exclude: ['/src/server'],
         },
         {
-          test: /\.s?css$/,
-          use: ['style-loader', 'css-loader', 'sass-loader'],
+          test: /\.scss$/,
+          use: [CssExtractor.loader, 'css-loader', 'sass-loader'],
         },
         {
-          test: /\.(png|jpg|jpeg|svg|gif)$/,
+          test: /\.(png|jpg|jpeg|svg|gif|css)$/,
           type: 'asset/resource',
         },
       ],
@@ -61,7 +64,17 @@ module.exports = {
       new HtmlWebpackPlugin({
         template: 'src/client/index.html',
       }),
+      new CssExtractor({
+        filename: "css.bundle.css",
+    }),
     ],
+
+    optimization: {
+      minimize: true, // set true to run minimizers also in development
+      minimizer: [
+          new CssMinimizer(),
+      ],
+    },
 
     infrastructureLogging: {
       level: 'none',
