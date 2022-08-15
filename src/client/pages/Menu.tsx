@@ -5,6 +5,8 @@ import { EVENTS, PATHS } from '../../util/constants';
 import { sendMsg } from '../../util/functions';
 import { Context } from '../components/ContextProvider';
 import IDForm from '../components/IDForm';
+import KingOfHearts from '../components/card-icons/KingOfHearts';
+import KingOfClubs from '../components/card-icons/KingOfClubs';
 
 export default function Menu() {
   const context = useContext(Context);
@@ -38,11 +40,13 @@ export default function Menu() {
   return (
     <div className='screen-center flex-container main-band'>
       <div className='flex-container column band-child clickable bg-hearts' onClick={playAlone}>
+        <KingOfHearts />
         <p className='band-child-title title'>
           Play Alone
         </p>
       </div>
       <div className='flex-container column band-child clickable bg-clubs' onClick={createGame}>
+        <KingOfClubs />
         <p className='band-child-title title'>
           Create A Game
         </p>
@@ -52,8 +56,9 @@ export default function Menu() {
           placeholder='Game ID' 
           submitString='Join' 
           label='Join A Game'
-          fieldStyle={{'width': '40%', 'marginBottom' : '5%'}}
-          errorStyle={{'top' : '160px', 'width' : '200px'}}
+          fieldStyle={{'width': '100%'}}
+          //errorStyle={{'top' : '160px', 'width' : '200px'}}
+          buttonStyle={{'top' : '160%'}}
           regex= {/[0-9]{1,3}$/}
         />
       </div>

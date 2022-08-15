@@ -77,7 +77,7 @@ export class Player {
     drawCard() {
         if (this.game === undefined) return;
 
-        if (this.cardsSum >= 21) {
+        if (this.cardsSum > 21) {
             this.game.logs.push(`${this.id} could not draw a new card`);
             return;
         }

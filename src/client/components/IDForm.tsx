@@ -36,7 +36,7 @@ export default function IDForm({handleSubmit, submitString, placeholder, label, 
         <ErrorMessage name='id'>
           {msg => <div className='error-message title' style={errorStyle}>{msg}</div>}
         </ErrorMessage>
-        <button type='submit' className='button' style={buttonStyle ? buttonStyle : {'marginBottom' : '45%'}}>
+        <button type='submit' className='button' style={{'position' : 'absolute', 'top' : '55%', ...buttonStyle}}>
           { submitString ? submitString : 'Change' }
         </button> 
       </Form>

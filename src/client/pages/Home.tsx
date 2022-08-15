@@ -9,6 +9,7 @@ import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import IDForm from '../components/IDForm';
 import { socket } from '../client';
 import { sendMsg } from '../../util/functions';
+import KingOfHearts from '../components/card-icons/KingOfHearts';
 
 const log = new Logger('Home');
 
@@ -32,7 +33,8 @@ export default function Home() {
   return (
     <div className='screen-center flex-container main-band'>
       <Notification op={EVENTS.SET_ID} />
-      <div className='flex-container column band-child bg-hearts'>
+      <div className='flex-container column band-child'>
+        <KingOfHearts />
         <p className='band-child-title title'>
           Your {/*{idProvenience}*/} ID is {context.id}.
         </p>

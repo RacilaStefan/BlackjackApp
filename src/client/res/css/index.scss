@@ -11,10 +11,13 @@ $special-button-hover: #ffffff;
 
 @import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Rancho&display=swap');
 
+html {
+    font-family: 'Lato', sans-serif;
+}
+
 body {
     background: rgb(179,217,255);
     background: radial-gradient(circle, rgba(179,217,255,1) 0%, rgba(49,160,184,1) 100%);
-    font-family: 'Lato', sans-serif;
 }
 
 .flex-container {
@@ -45,12 +48,15 @@ body {
 
 .main-band {
     width: 100%;
+    aspect-ratio: 2.55;
     justify-content: space-evenly;
+    max-height: 500px;
+    max-width: 1250px;
 }
 
 .band-child {
-    width: 400px;
-    height: 542px;
+    width: 29%;
+    height: 100%;
     border-radius: 10px;
     position: relative;
     justify-content: unset;
@@ -59,28 +65,20 @@ body {
     transition: box-shadow 0.3s;
 }
 
-.bg-hearts {
-    background-image: url(../media/king-of-hearts.svg);
-}
-
-.bg-clubs {
-    background-image: url(../media/king-of-clubs.svg);
+.bg-svg {
+    //background-image: url(../media/king-of-hearts.svg);
+    position: absolute;
+    width: 100%;
 }
 
 .band-child:hover {
     box-shadow: 0px 0px 20px black;
 }
 
-@media screen and (max-width: 1000px) {
-    .band-child {
-        width: 300px;
-        height: 407px;
-    }
-}
-
 .band-child-title {
-    margin: -12% 0px 55% 0px;
     font-size: 2rem;
+    position: relative;
+    top: -20%;
 }
 
 .button {
@@ -155,7 +153,7 @@ body {
 
 .tips {
     position: absolute;
-    top: 140%;
+    top: 130%;
     left: 50%;
     -webkit-transform: translate(-50%, 0%);
     transform: translate(-50%, 0%);
@@ -169,6 +167,7 @@ body {
     bottom: 0;
     background: rgb(0,0,0);
     background: radial-gradient(circle, rgba(0,0,0,0.5013714958639706) 70%, rgba(0,0,0,0.7002510476846988) 100%);
+    z-index: 5;
 }
 
 .text-border-2px {
@@ -198,4 +197,30 @@ body {
         2px 0px 0 black,
         2px 1px 0 black,
         2px 2px 0 black;
+}
+
+.mobile-disclaimer {
+    display: none;
+    background-color: #ff0000aa;
+}
+
+@media screen and (max-width: 1000px), (max-height: 700px) {
+   
+    .mobile-disclaimer {
+        display: flex;
+    }
+}
+
+@media screen and (max-width: 1300px), (max-height: 1100px) {
+    .board {
+        width: 600px !important;
+        height: 600px !important;
+    }
+}
+
+@media screen and (max-height: 900px) {
+    .board {
+        width: 400px !important;
+        height: 400px !important;
+    }
 }

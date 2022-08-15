@@ -60,7 +60,7 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
 
                 const cardsLength = player.cards.length;
                 player.drawCard();
-                if (cardsLength === player.cards.length || player.cardsSum >= 21) {
+                if (cardsLength === player.cards.length || player.cardsSum > 21) {
                     sendMsg(ws, EVENTS.BOUNCE, { type: EVENTS.END_TURN, data: '' });
                 }
                 
@@ -88,7 +88,7 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
             case EVENTS.JOIN_GAME:
 
                 const wantedGame = games[event.data];
-                if (wantedGame === undefined) {
+                if (wantedGame === undefined || wantedGame.turnID === wantedGame.dealer.id) {
                     sendMsg(ws, EVENTS.JOIN_GAME, false);
                     break;
                 }
@@ -106,10 +106,13 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
                 player.status = 'not-ready';
                 if (player.game === undefined) break;
                 
-                games[player.game.id]?.removePlayer(player);
+                const leavingGameID = player.game.id;
+                games[leavingGameID]?.removePlayer(player);
 
-                if (games[player.game.id]?.players.length === 0) {
-                    delete games[player.game.id];
+                if (games[leavingGameID]?.players.length === 0) {
+                    delete games[leavingGameID];
+                } else {
+                    broadcastGame(games[leavingGameID] as Game);
                 }
 
                 //delete player.game;

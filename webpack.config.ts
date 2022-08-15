@@ -32,7 +32,11 @@ module.exports = {
           use: [CssExtractor.loader, 'css-loader', 'sass-loader'],
         },
         {
-          test: /\.(png|jpg|jpeg|svg|gif|css)$/,
+          test: /\.svg$/,
+          loader: '@svgr/webpack',
+        },
+        {
+          test: /\.(png|jpg|jpeg|gif|css)$/,
           type: 'asset/resource',
         },
       ],
