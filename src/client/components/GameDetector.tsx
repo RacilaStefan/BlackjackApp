@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { EVENTS, PATHS } from '../../util/constants';
-import { constructEvent } from '../../util/functions';
+import { sendMsg } from '../../util/functions';
 import Logger from '../../util/logger';
 import { socket } from '../client';
 
@@ -13,10 +13,7 @@ export default function GameDetector() {
     useEffect(() => {
         if (location.pathname !== PATHS.game) {
             if (socket.readyState === socket.OPEN)
-                socket.send(constructEvent({
-                    type: EVENTS.LEAVE_GAME,
-                    data: '',
-                }));
+                sendMsg(socket, EVENTS.LEAVE_GAME);
         }
     }, [location.pathname]);
 

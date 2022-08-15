@@ -1,6 +1,7 @@
 import { EVENTS } from "../util/constants";
-import { constructEvent, handleMessageClient } from "../util/functions";
+import { sendMsg } from "../util/functions";
 import Logger from "../util/logger";
+import { handleMessageClient } from "./eventHandlersClient";
 
 const log = new Logger('Client');
 
@@ -16,17 +17,11 @@ socket.onopen = () => {
     
     if (enviroment === 'production') {
         setInterval(() => {
-            socket.send(constructEvent({
-                type: EVENTS.PING,
-                data: 'Ping?'
-            }));
+            sendMsg(socket, EVENTS.PING, 'Ping?');
         }, 20 * 1000);
     }
 
-    socket.send(constructEvent({
-        type: EVENTS.INFO,
-        data: 'Hello server!'
-    }));
+    sendMsg(socket, EVENTS.INFO, 'Hello server!');
 
     socket.onmessage = (event) => {
         log.debug('Message Event', event.data);

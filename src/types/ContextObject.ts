@@ -1,11 +1,14 @@
-import { Game } from "./GameTypes";
-import { EVENTS, statusEvents } from "../util/constants";
+import { Game } from "./GameClass";
+import { Player } from "./PlayerClass";
+import { statusEvents } from "../util/constants";
 
 export class ContextObject {
-    statusEvents = statusEvents;
-    id?: string | undefined;
+    id: string | undefined;
     setId: any;
-    game?: Game | undefined;
-    setGame?: any;
+    game: Game | undefined;
+    setGame: any;
+    player: Player | undefined;
+    setPlayer: any;
+    statusEvents = statusEvents;
     setStatusEvents?: any;
 }

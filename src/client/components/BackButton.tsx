@@ -17,7 +17,8 @@ export default function BackButton({ text } : {text?: string}) {
         'display': `${location.pathname === PATHS.home ? 'none' : 'flex'}`,
         'position': 'absolute',
         'left': '10%',
-        'top': '80%'}} onClick={() => navigate(-1)}>
+        'top': '80%',
+        'zIndex' : '10'}} onClick={() => navigate(-1)}>
       <div className='button-icon-left'>
         <ArrowBackIcon />
       </div>

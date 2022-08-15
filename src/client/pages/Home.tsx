@@ -8,7 +8,7 @@ import Notification from '../components/Notification';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import IDForm from '../components/IDForm';
 import { socket } from '../client';
-import { constructEvent } from '../../util/functions';
+import { sendMsg } from '../../util/functions';
 
 const log = new Logger('Home');
 
@@ -23,10 +23,7 @@ export default function Home() {
 
     //log.debug('Value submitted', value);
 
-    socket.send(constructEvent({
-      type: EVENTS.SET_ID,
-      data: value.id,
-    }));
+    sendMsg(socket, EVENTS.SET_ID, value.id);
     context.setStatusEvents({...context.statusEvents, [EVENTS.SET_ID]: 'waiting'});
 
     resetForm();

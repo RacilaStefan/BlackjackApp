@@ -1,9 +1,10 @@
-import { constructEvent, getRandomCard, readCookie } from "../util/functions";
+import { constructEvent, readCookie } from "../util/functions";
 import { CustomEvent } from "../types/CustomEvent";
 import { EVENTS } from "../util/constants";
 import { IncomingMessage } from "http";
 import { MessageEvent, WebSocket } from "ws";
-import { Game, Player } from "../types/GameTypes";
+import { Game } from "../types/GameClass";
+import { Player } from "../types/PlayerClass";
 
 const log = console.log;
 
@@ -22,11 +23,65 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
 
     if (player !== undefined) {
         switch(event.type) {
+            case EVENTS.DEALER_TURN:
+                if (player.game === undefined) break;
+
+                let highestScore = 0;
+                let winnerId = '';
+                player.game.players.forEach(player => {
+                    if (highestScore < player.cardsSum && player.cardsSum <= 21) {
+                        highestScore = player.cardsSum;
+                        winnerId = player.id;
+                    }
+                });
+
+                log('Winner id is', winnerId, 'and has', highestScore, 'score');
+                if (highestScore === 0) {
+                    player.game.winner = player.game.dealer.id; // If all players had scores over 21 the dealer wins
+                } else {
+                    
+                    // The dealer plays only if exists a player that has a score less then or equal with 21
+                    player.game.dealer.autoPlay(highestScore); // The dealer may overscore
+
+                    if (player.game.dealer.cardsSum > 21) {
+                        player.game.winner = winnerId;
+                    } else {
+                        player.game.winner = player.game.dealer.cardsSum < player.cardsSum ? winnerId : player.game.dealer.id;
+                    }
+                }
+
+                player.game.logs.push(`${player.game.winner} wins`);
+                player.game.turnID = '';
+                broadcastGame(player.game);
+                break;
+
+            case EVENTS.DRAW_CARD:
+                if (player.game === undefined) break;
+
+                const cardsLength = player.cards.length;
+                player.drawCard();
+                if (cardsLength === player.cards.length || player.cardsSum >= 21) {
+                    sendMsg(ws, EVENTS.BOUNCE, { type: EVENTS.END_TURN, data: '' });
+                }
+                
+                broadcastGame(player.game);
+                break;
+
+            case EVENTS.END_TURN:
+                if (player.game === undefined) break;
+
+                player.game.updateTurn();
+                if (player.game.turnID === player.game.dealer.id) {
+                    sendMsg(ws, EVENTS.BOUNCE, { type: EVENTS.DEALER_TURN, data: '' });
+                }
+
+                broadcastGame(player.game);
+                break;
+
             case EVENTS.GET_GAME: 
                 if (player.game === undefined) break;
                 
                 sendMsg(ws, EVENTS.GET_GAME, games[player.game.id]);
-                
                 break;
 
             case EVENTS.INFO: log(`Player with id ${currentPlayerID} says: ${event.data}`); break;
@@ -34,15 +89,17 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
 
                 const wantedGame = games[event.data];
                 if (wantedGame === undefined) {
-                    sendMsg(ws, EVENTS.JOIN_GAME, undefined);
+                    sendMsg(ws, EVENTS.JOIN_GAME, false);
                     break;
                 }
 
                 if (wantedGame.pushPlayer(player)) {
                     player.initCards();
-                    sendMsg(ws, EVENTS.JOIN_GAME, wantedGame);
+                    sendMsg(ws, EVENTS.JOIN_GAME, true);
                 }
 
+                log(wantedGame);
+                broadcastGame(wantedGame);
                 break;
 
             case EVENTS.LEAVE_GAME: 
@@ -61,7 +118,6 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
 
             case EVENTS.NEW_GAME: 
                 const newGame = new Game(getValidID(true));
-                player.initCards();
 
                 if (event.data === 'alone') {
                     player.status = 'ready';
@@ -69,7 +125,8 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
                 }
 
                 newGame.pushPlayer(player);
-                newGame.logs.push(`Player ${player.id} created a game`);
+                player.initCards();
+                newGame.logs.push(`${player.id} created a game`);
 
                 games[newGame.id] = newGame;
 
@@ -79,6 +136,27 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
             case EVENTS.PING:
                 log(event.data);
                 sendMsg(ws, EVENTS.PING, 'Pong.'); 
+                break;
+
+            case EVENTS.READY:
+                if (player.game === undefined) break;
+
+                player.status = player.status === 'ready' ? 'not-ready' : 'ready';
+                player.game.logs.push(`${player.id} is ${player.status === 'ready' ? 'ready' : 'not ready'}`);
+
+                let isEveryBodyReady = true;
+                player.game.players.forEach(player => {
+                    if (player.status === 'not-ready') {
+                        isEveryBodyReady = false;
+                    }
+                });
+
+                if (isEveryBodyReady) {
+                    player.game.dealer.status = 'ready';
+                    player.game.logs.push(`Game #${player.game.id} started`);
+                }
+
+                broadcastGame(player.game);
                 break;
 
             case EVENTS.SET_ID: 
@@ -100,8 +178,8 @@ export function handleMessageServer(message: MessageEvent, ws: WebSocket, initia
     }
     
     if (process.env['NODE_ENV'] === 'development') {
-        //log('Players', JSON.stringify(players, null, 2));
-        log('Players', players);
+        log('Players', JSON.stringify(players, null, 2));
+        //log('Players', players);
         log('ID Ledger', JSON.stringify(playersIDLedger, null, 2));
         log('Games', JSON.stringify(games, null, 2));
     }
@@ -121,7 +199,7 @@ export function handleIncomingMessage(ws: WebSocket, request: IncomingMessage) :
         id = getValidID();
         playersIDLedger[id] = id;
         players[id] = new Player(id, ws);
-        ws.send(constructEvent({type: EVENTS.SET_COOKIE, data: id}));
+        sendMsg(ws, EVENTS.SET_COOKIE, id);
 
         log('Connected with a new client, sendind id: ' + id);
     } else {
@@ -133,24 +211,7 @@ export function handleIncomingMessage(ws: WebSocket, request: IncomingMessage) :
         log('Connected with client, id: ' + id);
     }
 
-    ws.send(constructEvent({type: EVENTS.INFO, data: 'Message from the server'}));
-
-    return id;
-}
-
-
-function getValidID(isForGame?: boolean) {
-    let isValid = true;
-    let id: string;
-
-    do {
-        id = Math.floor(Math.random() * 1000).toString();
-        if (isForGame) {
-            isValid = games[id] === undefined;
-        } else {
-            isValid = players[id] === undefined;
-        }
-    } while (!isValid);
+    sendMsg(ws, EVENTS.INFO, 'Message from the server');
 
     return id;
 }
@@ -181,9 +242,31 @@ export function handleLoosingConnection(id: string) {
     }
 }
 
+function getValidID(isForGame?: boolean) {
+    let isValid = true;
+    let id: string;
+
+    do {
+        id = Math.floor(Math.random() * 1000).toString();
+        if (isForGame) {
+            isValid = games[id] === undefined;
+        } else {
+            isValid = players[id] === undefined;
+        }
+    } while (!isValid);
+
+    return id;
+}
+
 function sendMsg(ws: WebSocket, type: string, msg: any) {
     ws.send(constructEvent({
         type: type,
         data: typeof msg === 'string' ? msg : JSON.stringify(msg),
     }));
+}
+
+function broadcastGame(game: Game) {
+    game.players.forEach(player => {
+        sendMsg(player.ws as any, EVENTS.GET_GAME, player.game);
+    });
 }

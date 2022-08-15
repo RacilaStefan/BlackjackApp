@@ -1,7 +1,7 @@
 import { createServer } from 'http';
 import { MessageEvent, WebSocketServer } from 'ws';
 import { requestListener } from './routing';
-import { handleIncomingMessage, handleLoosingConnection, handleMessageServer } from './eventHandlers';
+import { handleIncomingMessage, handleLoosingConnection, handleMessageServer } from './eventHandlersServer';
 
 const log = console.log;
 

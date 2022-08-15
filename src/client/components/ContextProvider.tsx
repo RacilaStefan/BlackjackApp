@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from 'react'
-import { readCookie, validId } from '../../util/functions';
+import { readCookie } from '../../util/functions';
 import Logger from '../../util/logger';
 import { ContextObject } from '../../types/ContextObject';
 import { contextHolder } from '../contextHolder';
@@ -12,6 +12,7 @@ export const Context = createContext<ContextObject>(new ContextObject());
 export default function ContextProvider({children}) {
     const [id, setId] = useState();
     const [game, setGame] = useState();
+    const [player, setPlayer] = useState();
     const [status, setStatusEvents] = useState(statusEvents);
 
     useEffect(() => {
@@ -25,12 +26,14 @@ export default function ContextProvider({children}) {
         setId: setId,
         game: game,
         setGame: setGame,
+        player: player,
+        setPlayer: setPlayer,
         statusEvents: status,
         setStatusEvents: setStatusEvents,
     };
 
     contextHolder.context = {...context};
-    // log.debug('Context', context);
+     log.debug('Context', context);
     // log.debug('Context Holder', contextHolder.context);
 
     return (

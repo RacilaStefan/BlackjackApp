@@ -1,44 +1,11 @@
-import { contextHolder } from "../client/contextHolder";
 import { CustomEvent } from "../types/CustomEvent";
-import { Card } from "../types/GameTypes";
-import { CARD_TYPES, EVENTS } from "./constants";
+import { Card } from "../types/GameClass";
 import Logger from "./logger";
 
 const log = new Logger('Functions');
 
 export function validId(id: string) {
     return id.match(/[A-Za-z0-9]$/) !== null;
-}
-
-export function handleMessageClient(message: MessageEvent<any>) {
-    const event = JSON.parse(message.data as string) as CustomEvent;
-    const context = contextHolder.context;
-
-    //log.debug('Context Holder', context);
-    if (context !== undefined) {
-        switch(event.type) {
-            case EVENTS.GET_GAME: 
-                context.setGame(JSON.parse(event.data)); 
-                context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'close'});
-                break;
-            case EVENTS.INFO: log.info(event.data); break;
-            case EVENTS.PING: log.info(event.data); break;
-            case EVENTS.SET_COOKIE: 
-                document.cookie = 'ID='+event.data; 
-                context.setId(event.data);
-                break;
-            case EVENTS.SET_ID:
-                if (event.data !== '') {
-                    document.cookie = 'ID='+event.data;
-                    context.setId(event.data);
-                    context.setStatusEvents({...context.statusEvents, [EVENTS.SET_ID]: 'success'});
-                    break;
-                }
-                context.setStatusEvents({...context.statusEvents, [EVENTS.SET_ID]: 'error'});
-                break;
-            default: log.info('Unknown event'); break;
-        }
-    }
 }
 
 export function constructEvent(event: CustomEvent): string {
@@ -53,10 +20,29 @@ export function readCookie(cookies: string, id?: string) {
         return cookiesArray;
 }
 
-export function getRandomCard(): Card {
-    const randomNumber = Math.floor(Math.random() * 4);
-    return {
-        value: Math.floor((Math.random() * 13)) + 2,
-        type: CARD_TYPES[randomNumber] as string,
-    };
+export function sendMsg(ws: WebSocket, type: string, msg?: any) {
+    ws.send(constructEvent({
+        type: type,
+        data: typeof msg === 'string' ? msg : JSON.stringify(msg),
+    }));
+}
+
+// Fisher–Yates shuffle
+export function shuffleCards(cards: Card[]) {
+   
+    let currentIndex = cards.length;
+    let randomIndex: number;
+    
+    // While there remain elements to shuffle.
+    while (currentIndex != 0) {
+    
+        // Pick a remaining element.
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+    
+        // And swap it with the current element.
+        [cards[currentIndex] as any, cards[randomIndex] as any] = [cards[randomIndex], cards[currentIndex]];
+    }
+
+    return cards;
 }

@@ -1,3 +1,5 @@
+import { Card } from '../types/GameClass';
+
 export const PATHS = {
     home: '/',
     menu: '/menu',
@@ -5,6 +7,8 @@ export const PATHS = {
 };
 
 export const EVENTS = {
+    BOUNCE : 'BOUNCE',
+    DEALER_TURN: 'DEALER_TURN',
     DRAW_CARD: 'DRAW_CARD',
     END_TURN: 'END_TURN',
     ERROR: 'ERROR',
@@ -14,6 +18,7 @@ export const EVENTS = {
     LEAVE_GAME: 'LEAVE_GAME',
     NEW_GAME: 'NEW_GAME',
     PING: 'PING',
+    READY: 'READY',
     SET_COOKIE: 'SET_COOKIE',
     SET_ID: 'SET_ID',
     VALIDATE_ID: 'VALIDATE_ID',
@@ -38,3 +43,11 @@ export const ASSET_TYPES = {
 export const CARD_TYPES = [ 'spades', 'hearts', 'clubs', 'diamonds' ];
 
 export const MAX_PLAYERS_PER_GAME = 5;
+
+export const CARDS: Card[] = [];
+
+for (let i = 2; i <= 14; i++) {
+    for (let j = 0; j < CARD_TYPES.length; j++) {
+        CARDS.push({ value: i, type: CARD_TYPES[j] as any});
+    }
+}

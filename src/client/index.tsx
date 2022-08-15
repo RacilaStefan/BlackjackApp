@@ -21,7 +21,7 @@ if (rootElem === null) {
     rootElem.id = 'root';
 }
 
-const root = ReactDOM.createRoot(document.body.appendChild(rootElem));
+export const root = ReactDOM.createRoot(document.body.appendChild(rootElem));
 
 root.render(
     <React.StrictMode>

@@ -2,10 +2,8 @@ import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { socket } from '../client';
 import { EVENTS, PATHS } from '../../util/constants';
-import { constructEvent } from '../../util/functions';
-import BackButton from '../components/BackButton';
+import { sendMsg } from '../../util/functions';
 import { Context } from '../components/ContextProvider';
-import { Formik } from 'formik';
 import IDForm from '../components/IDForm';
 
 export default function Menu() {
@@ -13,13 +11,13 @@ export default function Menu() {
   const navigate = useNavigate();
 
   const playAlone = () => {
-    socket.send(constructEvent({type: EVENTS.NEW_GAME, data: 'alone'}));
+    sendMsg(socket, EVENTS.NEW_GAME, 'alone');
     context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'waiting'});
     navigate(PATHS.game);
   }
 
   const createGame = () => {
-    socket.send(constructEvent({type: EVENTS.NEW_GAME, data: ''}));
+    sendMsg(socket, EVENTS.NEW_GAME);
     context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'waiting'});
     navigate(PATHS.game);
   }
@@ -29,11 +27,10 @@ export default function Menu() {
 
     //log.debug('Value submitted', value);
 
-    socket.send(constructEvent({
-      type: EVENTS.JOIN_GAME,
-      data: value.id,
-    }));
+    sendMsg(socket, EVENTS.JOIN_GAME, value.id);
     context.setStatusEvents({...context.statusEvents, [EVENTS.JOIN_GAME]: 'waiting'});
+    context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'waiting'});
+    navigate(PATHS.game);
 
     resetForm();
   }
