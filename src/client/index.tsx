@@ -6,11 +6,12 @@ import Logger from '../util/logger';
 import ContextProvider from './components/ContextProvider';
 import RoutesList from './components/RoutesList';
 
+import './res/css/normalize.css';
 import './res/css/index.scss';
 import './res/css/home.scss';
 import './res/css/game.scss';
+
 import BackButton from './components/BackButton';
-import GameDetector from './components/GameDetector';
 
 const log = new Logger('Index');
 
@@ -29,7 +30,6 @@ root.render(
             <ContextProvider>
                 <RoutesList />
                 <BackButton />
-                <GameDetector />
             </ContextProvider>
         </BrowserRouter>
     </React.StrictMode>

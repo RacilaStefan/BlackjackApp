@@ -105,3 +105,20 @@
 .current-turn {
     color: index.$waiting;
 }
+
+.game-id {
+    position: absolute;
+    top: -10%;
+    right: -25%;
+    font-size: 2rem;
+}
+
+.share-id {
+    max-width: 400px;
+    justify-content: space-evenly;
+    padding-top: 20px;
+    
+    span {
+        margin: 10px
+    };
+}

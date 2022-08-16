@@ -1,6 +1,6 @@
 import * as path from 'path';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import CssExtractor from "mini-css-extract-plugin";
+import MiniCssExtractPlugin from "mini-css-extract-plugin";
 
 import CssMinimizer from "css-minimizer-webpack-plugin";
 
@@ -11,7 +11,7 @@ module.exports = {
 
     output: {
       path: path.resolve(__dirname, 'build'),
-      filename: '[name].bundle.js',
+      filename: '[name].js',
       publicPath: '/',
       clean: true,
     },
@@ -28,15 +28,15 @@ module.exports = {
           exclude: ['/src/server'],
         },
         {
-          test: /\.scss$/,
-          use: [CssExtractor.loader, 'css-loader', 'sass-loader'],
+          test: /\.s?css$/,
+          use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
         },
         {
           test: /\.svg$/,
           loader: '@svgr/webpack',
         },
         {
-          test: /\.(png|jpg|jpeg|gif|css)$/,
+          test: /\.(png|jpg|jpeg|gif)$/,
           type: 'asset/resource',
         },
       ],
@@ -46,7 +46,7 @@ module.exports = {
       extensions: ['.js', '.jsx', '.ts', '.tsx'],
     },
 
-    devtool: 'cheap-source-map',
+    devtool: 'hidden-source-map',
     target: 'web',
 
     devServer: {
@@ -68,8 +68,8 @@ module.exports = {
       new HtmlWebpackPlugin({
         template: 'src/client/index.html',
       }),
-      new CssExtractor({
-        filename: "css.bundle.css",
+      new MiniCssExtractPlugin({
+        filename: "[name].css",
     }),
     ],
 

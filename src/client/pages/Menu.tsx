@@ -1,27 +1,26 @@
-import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useContext, useState } from 'react';
 import { socket } from '../client';
-import { EVENTS, PATHS } from '../../util/constants';
+import { EVENTS } from '../../util/constants';
 import { sendMsg } from '../../util/functions';
 import { Context } from '../components/ContextProvider';
 import IDForm from '../components/IDForm';
 import KingOfHearts from '../components/card-icons/KingOfHearts';
 import KingOfClubs from '../components/card-icons/KingOfClubs';
+import Modal from '../components/Modal';
+import Notification from '../components/Notification';
 
 export default function Menu() {
   const context = useContext(Context);
-  const navigate = useNavigate();
+  const [show, setShow] = useState(false);
 
   const playAlone = () => {
     sendMsg(socket, EVENTS.NEW_GAME, 'alone');
     context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'waiting'});
-    navigate(PATHS.game);
   }
 
-  const createGame = () => {
-    sendMsg(socket, EVENTS.NEW_GAME);
+  const createGame = (is1v1: boolean) => {
+    sendMsg(socket, EVENTS.NEW_GAME, is1v1);
     context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'waiting'});
-    navigate(PATHS.game);
   }
 
   const joinGame = (value, {resetForm}) => {
@@ -32,20 +31,20 @@ export default function Menu() {
     sendMsg(socket, EVENTS.JOIN_GAME, value.id);
     context.setStatusEvents({...context.statusEvents, [EVENTS.JOIN_GAME]: 'waiting'});
     context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'waiting'});
-    navigate(PATHS.game);
 
     resetForm();
   }
 
   return (
     <div className='screen-center flex-container main-band'>
-      <div className='flex-container column band-child clickable bg-hearts' onClick={playAlone}>
+      <Notification event={ EVENTS.JOIN_GAME } errorMsg='Game does not exist'/>
+      <div className='flex-container column band-child clickable' onClick={playAlone}>
         <KingOfHearts />
         <p className='band-child-title title'>
           Play Alone
         </p>
       </div>
-      <div className='flex-container column band-child clickable bg-clubs' onClick={createGame}>
+      <div className='flex-container column band-child clickable' onClick={() => setShow(true)}>
         <KingOfClubs />
         <p className='band-child-title title'>
           Create A Game
@@ -65,6 +64,14 @@ export default function Menu() {
       <div className='tips title'>
         A Game ID is a number from 1 to 999
       </div>
+      <Modal show={show} setShow={setShow}> 
+        <button className='button special-button' style={{'top' : '35%'}} onClick={() => createGame(false)}>
+          Play with Dealer
+        </button>
+        <button className='button special-button' style={{'top' : '59%'}} onClick={() => createGame(true)}>
+          Play 1vs1
+        </button>
+      </Modal>
     </div>
   );
 }

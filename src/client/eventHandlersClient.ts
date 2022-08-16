@@ -1,4 +1,4 @@
-import { EVENTS } from '../util/constants';
+import { EVENTS, PATHS } from '../util/constants';
 import { contextHolder } from './contextHolder';
 import { CustomEvent } from '../types/CustomEvent';
 import Logger from '../util/logger';
@@ -19,13 +19,27 @@ export function handleMessageClient(message: MessageEvent<any>) {
             case EVENTS.BOUNCE:
                 const bouncingEvent: CustomEvent = JSON.parse(event.data);
                 sendMsg(socket, bouncingEvent.type, bouncingEvent.data); break;
-            case EVENTS.GET_GAME: 
-                context.setGame(JSON.parse(event.data));
-                context.setPlayer(Object.assign(Game.prototype, JSON.parse(event.data)).getPlayerFromID(context.id));
-                context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'close'});
+            case EVENTS.GET_GAME:
+                let game = JSON.parse(event.data);
+                if (game !== null) {
+                    game = new Game('');
+                    Object.assign(game, JSON.parse(event.data));
+                    //log.debug('Game', game);
+                    context.setGame(game);
+                    context.setPlayer(game.getPlayerFromID(context.id));
+                    context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'close'});
+                }
                 break;
 
             case EVENTS.INFO: log.info(event.data); break;
+            case EVENTS.JOIN_GAME:
+                if (event.data === JSON.stringify(false)) {
+                    context.setStatusEvents({...context.statusEvents, [EVENTS.JOIN_GAME]: 'error'});
+                    break;
+                }
+
+                context.setStatusEvents({...context.statusEvents, [EVENTS.GET_GAME]: 'success'});
+                break;
             case EVENTS.PING: log.info(event.data); break;
             case EVENTS.SET_COOKIE: 
                 document.cookie = 'ID='+event.data; 

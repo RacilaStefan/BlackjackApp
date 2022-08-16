@@ -18,13 +18,17 @@ socket.onopen = () => {
     if (enviroment === 'production') {
         setInterval(() => {
             sendMsg(socket, EVENTS.PING, 'Ping?');
-        }, 20 * 1000);
+        }, 200 * 1000);
     }
+
+    setInterval(() => {
+        sendMsg(socket, EVENTS.GET_GAME)
+    }, 5 * 1000);
 
     sendMsg(socket, EVENTS.INFO, 'Hello server!');
 
     socket.onmessage = (event) => {
-        log.debug('Message Event', event.data);
+        //log.debug('Message Event', event.data);
         handleMessageClient(event);
     }
 }

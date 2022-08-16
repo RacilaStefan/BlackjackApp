@@ -32,7 +32,7 @@ export default function Home() {
   
   return (
     <div className='screen-center flex-container main-band'>
-      <Notification op={EVENTS.SET_ID} />
+      <Notification event={EVENTS.SET_ID} />
       <div className='flex-container column band-child'>
         <KingOfHearts />
         <p className='band-child-title title'>

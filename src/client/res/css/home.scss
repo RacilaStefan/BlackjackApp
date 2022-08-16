@@ -38,15 +38,16 @@
 
 .notification {
     position: absolute;
-    justify-content: space-around;
-    top: -300px;
-    width: 200px;
-    height: 100px;
+    top: -50%;
     border-radius: 20px;
-    box-shadow: 0px 5px;
-    text-align: center;
-
+    box-shadow: 0px 5px black;
+    max-width: 300px;
+    padding: 10px;
+    
     div {
+        padding: 10px;
+        margin-bottom: 20px;
+        text-align: center;
         text-transform: uppercase;
     }
 }

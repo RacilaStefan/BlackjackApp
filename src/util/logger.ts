@@ -55,4 +55,4 @@ function getTime() {
 
 new Logger('Logger').info('Loaded');
 
-type LoggerInput = object | boolean | string | number | undefined;
+type LoggerInput = object | boolean | string | number | undefined | null;

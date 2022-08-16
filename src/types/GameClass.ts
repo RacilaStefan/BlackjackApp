@@ -13,6 +13,7 @@ export class Game {
     turnIndex: number = 0;
     deck: Deck;
     winner: string = '';
+    is1v1: boolean = false;
     
     constructor(id: string) {
         this.id = id;
@@ -23,8 +24,10 @@ export class Game {
     }
 
     pushPlayer(player: Player) {
-        if (this.players.length < MAX_PLAYERS_PER_GAME) {
+        const maxPlayersCount = this.is1v1 ? 2 : MAX_PLAYERS_PER_GAME;
+        if (this.players.length < maxPlayersCount) {
             player.game = this;
+            player.initCards();
             this.players.push(player);
             if (this.players.length === 1) {
                 this.turnID = this.players[this.turnIndex++]?.id as string;
@@ -40,10 +43,14 @@ export class Game {
         this.players.forEach(player => {
             if (player.id !== playerToBeRemoved.id) {
                 players.push(player);
+                if (this.turnIndex > 0)
+                    this.turnIndex--;
             }
         });
 
         this.players = players;
+        this.turnID = this.players[this.turnIndex]?.id as string;
+        log('Next player to draw is', this.turnID);
     }
 
     updateTurn() {

@@ -5,25 +5,25 @@ import { Context } from './ContextProvider';
 
 const log = new Logger('Notification');
 
-export default function Notification({ op }) {
+export default function Notification({ event, waitingMsg, errorMsg, successMsg } : {event: string, waitingMsg?: string, errorMsg?: string, successMsg?: string}) {
   const context = useContext(Context);
   
   let element: JSX.Element | null;
   let className: string = '';
   //log.debug(`Status ${op}`, context.statusEvents[op])
-  switch(context.statusEvents[op]) {
+  switch(context.statusEvents[event]) {
     case 'waiting': 
-      element = <div > Waiting for server response! </div>;
+      element = <div > {waitingMsg ? waitingMsg : 'Waiting for server response!'} </div>;
       className='waiting'; 
     break;
 
     case 'error': 
-      element = <div > Error! </div>; 
+      element = <div > {errorMsg ? errorMsg : 'Error!'} </div>; 
       className='error'
     break;
 
     case 'success':
-      element = <div > Success! </div>;
+      element = <div > {successMsg ? successMsg : 'Success!' } </div>;
       className='success'
     break;
 
@@ -31,7 +31,7 @@ export default function Notification({ op }) {
   }
 
   const handleClose = () => {
-    context.setStatusEvents({...context.statusEvents, [op]: 'close'});
+    context.setStatusEvents({...context.statusEvents, [event]: 'close'});
   }
 
   return (

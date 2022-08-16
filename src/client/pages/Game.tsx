@@ -3,10 +3,7 @@ import { Navigate } from 'react-router-dom';
 import { Card } from '../../types/GameClass';
 import { Context } from '../components/ContextProvider';
 import { EVENTS, PATHS } from '../../util/constants';
-import HeartsIcon from '../components/card-icons/HeartsIcon';
-import ClubsIcon from '../components/card-icons/ClubsIcon';
-import DiamondsIcon from '../components/card-icons/DiamondsIcon';
-import SpadesIcon from '../components/card-icons/SpadesIcon';
+import { HeartsIcon, ClubsIcon, DiamondsIcon, SpadesIcon }  from '../components/card-icons/CardIconTypes';
 import StopIcon from '@mui/icons-material/PanToolOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import ReadyIcon from '@mui/icons-material/CheckCircle';
@@ -15,6 +12,7 @@ import { socket } from '../client';
 import { sendMsg } from '../../util/functions';
 import Modal from '../components/Modal';
 import Logger from '../../util/logger';
+import { Player } from '../../types/PlayerClass';
 
 const log = new Logger('Game');
 
@@ -35,23 +33,6 @@ const cardValues = {
 export default function Game() {
   const context = useContext(Context);
   const [showReadyModal, setShowReadyModal] = useState(false);
-  
-  const renderCards = (cards: Card[]) => {
-    const cardsElem: JSX.Element[] = [];
-    let id = 0;
-    cards.forEach(card => {
-      cardsElem.push(
-        <div key={id++} className='flex-container card'>
-          {cardValues[card.value] === undefined ? card.value : cardValues[card.value]}
-          <div className={`card-icon `}>
-            {cardIcons[card.type]}
-          </div>
-        </div>
-      );
-    });
-
-    return cardsElem;
-  }
 
   const handleDrawCard = () => {
     sendMsg(socket, EVENTS.DRAW_CARD);
@@ -70,29 +51,35 @@ export default function Game() {
   const game = context.game;
   const player = context.player;
 
-  if (game === undefined || player === undefined) {
-    log.info('Buna ziua, am navigat');
+  if (game === null || player === undefined) {
+    log.debug('Game', game);
+    log.debug('Player', player);
     return <Navigate to={PATHS.home}/>;
   }
 
   if (player.status === 'not-ready' && !showReadyModal)
     setShowReadyModal(true);
 
-  const players = game.players.map(player => {
-    return (
-      <div key={player.id} className='flex-container player-container'>
-        <div className={`flex-container player-title title text-border-2px ${player.status} ${game.turnID === player.id ? 'current-turn' : ''}`}>
-          {player.id}
-          <div className='flex-container points'>
-            {player.cardsSum}
-          </div>
-        </div>
-        <div className='flex-container cards-container'>
-          {renderCards(player.cards)}
-        </div>
-      </div>
-    );
-  });
+    let playersElem: JSX.Element[] = [];
+
+  if (game.is1v1) {
+    playersElem.push(renderPlayer(player, game.turnID));
+  } else {
+    playersElem = game.players.map(player => {
+      return <> {renderPlayer(player, game.turnID)} </>;
+    });
+  }
+    
+  let dealer: JSX.Element = <></>; 
+
+  if (game.is1v1) {
+    let oponent = game.players.find(_player => _player.id !== player.id);
+
+    if (oponent !== undefined)
+      dealer = renderPlayer(oponent, game.turnID, true);
+  } else {
+    dealer = renderPlayer(game.dealer, game.turnID, true);
+  }
 
   const logs = game.logs.map(log => {
     return (
@@ -104,19 +91,12 @@ export default function Game() {
 
   return (
     <div className='screen-center board'>
-      <div className='flex-container column dealer-container'>
-        <div className={`flex-container dealer-title title text-border-2px ${game.dealer.status} ${game.turnID === game.dealer.id ? 'current-turn' : ''}`}>
-          {game.dealer.id}
-          <div className='flex-container points'>
-            {game.dealer.cardsSum}
-          </div>
-        </div>
-        <div className='flex-container cards-container'>
-            {renderCards(game.dealer.cards)}
-        </div>
+      <div className='title game-id'>
+        Game id: {game.id}
       </div>
+      {dealer}
       <div className='flex-container players-wrapper'>
-        {players}
+        {playersElem}
       </div>
       { game.turnID === player.id ? 
           <><button className='button special-button' style={{'left' : '-25%'}} onClick={handleDrawCard}>
@@ -135,16 +115,58 @@ export default function Game() {
         {logs}
       </div>
       <Modal show={game.dealer.status === 'not-ready'}>
-        <div className='modal flex-container'>
-          <button className='button' style={{}} onClick={setReady}>
-            <div className='button-icon-left'>
-              {player.status === 'ready' ? <CancelIcon /> : <ReadyIcon />}
-              
-            </div>
-            {player.status === 'ready' ? 'Not Ready' : 'Ready'}
-          </button>
-        </div>
+        <button 
+          className={game.players.length === 1 && game.is1v1 ? 'button-disabled' : 'button'} 
+          disabled={game.players.length === 1 && game.is1v1 ? true : false}
+          style={{}} 
+          onClick={setReady}>
+          <div className='button-icon-left'>
+            {player.status === 'ready' ? <CancelIcon /> : <ReadyIcon />}
+          </div>
+          {player.status === 'ready' ? 'Not Ready' : 'Ready'}
+        </button>
+        { player.id === (game.players[0]?.id) ? 
+          <div className='flex-container column title text-border-2px current-turn share-id'>
+            <span style={{'fontSize' : '2rem'}} className='not-ready'> {game.id} </span>
+            { game.is1v1 ? 
+            <span>Share this code with your friend so that he/she can join the BATTLE</span> : 
+            <span>Share this code with your friends so that they can join the game</span>}
+          </div>
+          : <></> 
+        }
       </Modal>
+    </div>
+  );
+}
+
+const renderCards = (cards: Card[]) => {
+  const cardsElem: JSX.Element[] = [];
+  cards.forEach(card => {
+    cardsElem.push(
+      <div key={card.value + card.type} className='flex-container card'>
+        {cardValues[card.value] === undefined ? card.value : cardValues[card.value]}
+        <div className={`card-icon `}>
+          {cardIcons[card.type]}
+        </div>
+      </div>
+    );
+  });
+
+  return cardsElem;
+}
+
+const renderPlayer = (player: Player, turnID: string, isDealer?: boolean) => {
+  return (
+    <div key={player.id} className={`flex-container ${isDealer ? 'dealer-container' : 'player-container'}`}>
+      <div className={`flex-container ${isDealer ? 'dealer-title' : 'player-title'} title text-border-2px ${player.status} ${turnID === player.id ? 'current-turn' : ''}`}>
+        {player.id}
+        <div className='flex-container points'>
+          {player.cardsSum}
+        </div>
+      </div>
+      <div className='flex-container cards-container'>
+        {renderCards(player.cards)}
+      </div>
     </div>
   );
 }

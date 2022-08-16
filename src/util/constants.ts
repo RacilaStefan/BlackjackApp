@@ -37,6 +37,7 @@ export const ASSET_TYPES = {
     '.ico': 'image/*',
     '.svg': 'image/svg+xml',
     '.jpg': 'image/*',
+    '.png': 'image/*',
     '': 'text/html',    
 };
 

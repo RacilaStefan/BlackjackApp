@@ -93,7 +93,7 @@ export class Player {
         if (this.cardsSum > target) return;
         
         do {
-            let drawCard = 21 - this.cardsSum + Math.floor(Math.random() * 5) < 8;
+            let drawCard = 21 - this.cardsSum + Math.floor(Math.random() * 2) < 5;
 
             if (drawCard || this.cardsSum < target) {
                 this.drawCard();
